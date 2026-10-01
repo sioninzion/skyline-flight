@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SKYLINE — 아일랜드 런</title>
+  <meta name="description" content="마우스 없이 즐기는 3D 비행 게임. 섬 사이의 황금빛 링을 따라 날아보세요.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23132331'/%3E%3Cpath d='M16 5 19 14 28 20 28 23 18 20 18 25 21 27 11 27 14 25 14 20 4 23 4 20 13 14Z' fill='%23ffb44a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./" aria-label="스카이라인 홈"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 19 13 29 20 29 23 18 20 18 26 22 29 10 29 14 26 14 20 3 23 3 20 13 13Z"/></svg><strong>SKYLINE<span>FLIGHT CLUB</span></strong></a>
+  <div class="flight-title"><span class="flight-no">FLIGHT 01</span><span class="separator"></span><span>아일랜드 런</span></div>
+  <div class="top-actions"><span class="keyboard-note">KEYBOARD ONLY</span><button id="sound" class="icon-button" aria-label="소리 켜기" title="M · 소리">♪ <span id="soundLabel">OFF</span><kbd>M</kbd></button></div>
+</header>
+<main id="game" aria-label="3D 비행 게임" tabindex="-1">
+  <div id="scene" role="img" aria-label="바다와 섬 사이를 비행하는 비행기와 황금빛 체크포인트 링"></div>
+  <div class="vignette"></div>
+  <div class="hud-top">
+    <div class="mission panel"><div class="eyebrow">YOUR MISSION</div><strong>황금빛 링을 따라 비행하세요</strong><div class="mission-progress"><span id="ringCount">00 <small>/ 12 RINGS</small></span><div class="segments" id="segments"></div></div></div>
+    <div class="compass"><div class="compass-labels"><span>NW</span><span>330</span><strong>N</strong><span>030</span><span>NE</span></div><div class="compass-ticks"></div><span class="compass-pointer">▼</span></div>
+    <div class="scoreboard panel"><div><span class="eyebrow">남은 시간</span><strong id="timer">01:15</strong></div><span class="score-divider"></span><div><span class="eyebrow">SCORE</span><strong id="score">00000</strong></div></div>
+  </div>
+  <div id="targetHint" class="target-hint" hidden><span>다음 링</span><strong id="distance">240 m</strong></div>
+  <div class="reticle" aria-hidden="true"><i></i><span></span><i></i></div>
+  <div id="feedback" class="feedback" aria-live="polite"></div>
+  <div id="lowWarning" class="low-warning" hidden>고도가 낮아요 · W / ↑ 로 상승</div>
+  <section class="start-card" id="startCard" aria-label="비행 시작">
+    <span class="route-tag"><span></span> FREE FLIGHT / 01</span>
+    <h1>아일랜드 런<span>ISLAND RUN</span></h1>
+    <p>푸른 바다 위, 당신만의 비행.<br>12개의 링 중 8개 이상을 통과해 보세요.</p>
+    <div class="brief"><span><b>12</b> 체크포인트</span><span><b>75</b> 초</span><span><b>∞</b> 도전</span></div>
+    <button class="primary" id="startButton"><span>비행 시작</span><kbd>ENTER ↵</kbd></button>
+    <div class="start-tip">자동으로 전진합니다. 방향만 조종하세요.</div>
+  </section>
+  <div class="overlay" id="overlay" hidden><section class="dialog panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><span class="route-tag" id="dialogTag">FLIGHT PAUSED</span><h2 id="dialogTitle">잠시 쉬어가기</h2><p id="dialogDescription">준비되면 다시 하늘로 돌아가세요.</p><div id="resultStats" class="result-stats" hidden></div><button class="primary" id="resumeButton"><span id="resumeLabel">비행 계속</span><kbd id="resumeKey">P</kbd></button><button class="secondary" id="restartButton">처음부터 다시 <kbd>R</kbd></button></section></div>
+  <div id="error" class="error" hidden></div>
+  <div class="hud-bottom">
+    <div class="telemetry panel"><div class="instrument"><span class="eyebrow">SPEED</span><div><strong id="speed">234</strong><span>km/h</span></div><div class="meter speed-meter"><i id="speedBar"></i></div></div><div class="instrument"><span class="eyebrow">ALTITUDE</span><div><strong id="altitude">100</strong><span>m</span></div><div class="meter"><i id="altitudeBar"></i></div></div><div class="boost-instrument"><div class="boost-title"><span class="eyebrow">BOOST</span><kbd>SPACE</kbd></div><div class="boost-meter"><i id="boostBar"></i></div><span id="boostText">가속 준비 완료</span></div></div>
+    <div class="flight-status"><span id="statusText">READY TO FLY</span><small><i></i> <span id="lives">♥ ♥ ♥</span></small></div>
+    <div class="route-map panel"><div><span class="eyebrow">FLIGHT PATH</span><span id="routePercent">0%</span></div><canvas id="map" width="360" height="130" aria-label="비행 경로 미니맵"></canvas></div>
+  </div>
+</main>
+<footer class="controls"><div class="control-group"><span class="keyset"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span class="or">/</span><span class="keyset arrows"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span><span>상하좌우 조종</span></div><div class="control-group"><kbd>SPACE</kbd><span>부스트</span></div><div class="control-group"><kbd>P</kbd><span>일시정지</span></div><div class="control-group"><kbd>R</kbd><span>재시작</span></div><span class="footer-note">연속 통과하면 점수가 더 높아져요</span></footer>
+<script type="module" src="game.js"></script>
+</body></html>

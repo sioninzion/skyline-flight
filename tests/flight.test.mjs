@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {COURSE,newFlight,startFlight,stepFlight} from '../flight.js';
+const dt=1/60;
+let s=newFlight();let original=structuredClone(s);stepFlight(s,dt,{up:true});assert.deepEqual(s,original);
+startFlight(s);for(let i=0;i<60;i++)stepFlight(s,dt,{up:true,right:true});assert(s.x>35&&s.y>125&&s.z< -60);
+s.phase='paused';original=structuredClone(s);stepFlight(s,dt,{down:true,boost:true});assert.deepEqual(s,original);
+startFlight(s);for(let i=0;i<100;i++)stepFlight(s,dt,{boost:true});assert(s.speed>105&&s.boost<50);
+for(let i=0;i<160;i++)stepFlight(s,dt,{});assert(s.boost>80&&s.speed<66);
+startFlight(s);s.z=-239;const events=stepFlight(s,.05);assert.equal(s.hits,1);assert.equal(s.perfects,1);assert.equal(s.score,175);assert(events.some(e=>e.type==='hit'));
+startFlight(s);s.x=100;s.z=-239;stepFlight(s,.05);assert.equal(s.results[0],'miss');assert(s.time<71&&s.time>69);
+startFlight(s);s.y=8;stepFlight(s,.05);assert.equal(s.lives,2);assert.equal(s.y,48);
+s.invulnerable=0;s.y=8;stepFlight(s,.05);s.invulnerable=0;s.y=8;stepFlight(s,.05);assert.equal(s.outcome,'crash');
+startFlight(s);s.time=.01;stepFlight(s,.05);assert.equal(s.outcome,'timeout');
+startFlight(s);let ticks=0;while(s.phase==='flying'&&ticks++<9000){const r=COURSE[s.next];stepFlight(s,dt,{left:s.x-r.x>3,right:r.x-s.x>3,up:r.y-s.y>3,down:s.y-r.y>3});}assert.equal(s.outcome,'win');assert.equal(s.hits,12);assert(s.score>4500);
+console.log(JSON.stringify({checks:'ready, movement, pause, boost, refill, ring crossing, miss penalty, recovery, crash, timeout, full-course completion',passed:true,autopilot:{hits:s.hits,score:s.score,secondsElapsed:Math.round(ticks/60)}}));
